@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { beaches } from '../beaches';
 
-console.log('keyof typeof beaches;', )
 type BeachNameType = keyof typeof beaches;
 
 interface DataPoint {
@@ -54,14 +53,11 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const queryParams = new URLSearchParams(apiOptions).toString();
     const station = beaches[stationName]
     const apiUrl = `${NOAA_API_LINK}?${queryParams}&station=${station}`;
-    // console.log(apiUrl);
     const response = await fetch(apiUrl);
     const responseData = await response.json();
-    // console.log(responseData);
 
     const changes = calculateRateOfChange(responseData.data as DataPoint[]);
     const probability = estimateRipCurrentProbability(changes);
-    // console.log(probability);
 
     return NextResponse.json({ probability });
 }
