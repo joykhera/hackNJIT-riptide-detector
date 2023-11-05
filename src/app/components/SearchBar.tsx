@@ -45,7 +45,7 @@ function SearchBar({ API, position, setPosition }: Data) {
     if (!isLoaded) return 'Loading Maps';
 
     return (
-        <div className="flex items-center justify-center mt-4">
+        <div className="flex items-center justify-center h-20 bg-header-blue">
           {/* <div className="relative w-64"> */}
             <Autocomplete className='relative w-64'>
               <input

@@ -109,80 +109,84 @@ export default function MapSection({API}: {API: string}) {
 	console.log(position);
 
 	return (
-		<div className="flex flex-col gap-4 mt-12">
-			<SearchBar 
-				API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
-				position={position}
-				setPosition={setPosition}
-			/>
-			{isLoaded && (
-				<GoogleMap
-					mapContainerStyle={containerStyle}
-					center={{ lat: position.lat, lng: position.lon }}
-					zoom={13}
-				>
-					{!isFirst && (
-						<div>
-							{places.map((place) => (
-								<MarkerF
-									key={`${place.name}-${place.latitude}-${place.longitude}`}
-									onClick={handleOpen}
-									position={{
-										lat: place.latitude,
-										lng: place.longitude,
-									}}
-									animation={
-										window.google.maps.Animation.DROP
-									}
-								/>
-							))}
-							{selectedPlace && (
-								<>
-									<InfoWindowF
+		<div>
+			<div className="">
+				<SearchBar 
+					API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
+					position={position}
+					setPosition={setPosition}
+				/>
+			</div>
+			<div className="flex flex-col gap-4 mt-12">
+				{isLoaded && (
+					<GoogleMap
+						mapContainerStyle={containerStyle}
+						center={{ lat: position.lat, lng: position.lon }}
+						zoom={13}
+					>
+						{!isFirst && (
+							<div>
+								{places.map((place) => (
+									<MarkerF
+										key={`${place.name}-${place.latitude}-${place.longitude}`}
+										onClick={handleOpen}
 										position={{
-											lat: selectedPlace.latitude,
-											lng: selectedPlace.longitude,
+											lat: place.latitude,
+											lng: place.longitude,
 										}}
-										zIndex={1}
-										options={{
-											pixelOffset: new google.maps.Size(
-												0,
-												-40
-											),
-										}}
-										onCloseClick={() =>
-											setSelectedPlace(undefined)
+										animation={
+											window.google.maps.Animation.DROP
 										}
-									>
-										<div>
-											<h3>{selectedPlace.name}</h3>
-										</div>
-									</InfoWindowF>
-									<div className="">
-										<Modal
-											open={open}
-											onClose={handleClose}
-											aria-labelledby="modal-modal-title"
-											aria-describedby="modal-modal-description"
+									/>
+								))}
+								{selectedPlace && (
+									<>
+										<InfoWindowF
+											position={{
+												lat: selectedPlace.latitude,
+												lng: selectedPlace.longitude,
+											}}
+											zIndex={1}
+											options={{
+												pixelOffset: new google.maps.Size(
+													0,
+													-40
+												),
+											}}
+											onCloseClick={() =>
+												setSelectedPlace(undefined)
+											}
 										>
-											<Box sx={style}>
-												<Info
-													beach={temp.beach}
-													probability={
-														temp.probability
-													}
-													low={temp.low}
-													high={temp.high}
-												/>
-											</Box>
-										</Modal>
-									</div>
-								</>
-							)}
-						</div>
-					)}
-				</GoogleMap>
-			)}
+											<div>
+												<h3>{selectedPlace.name}</h3>
+											</div>
+										</InfoWindowF>
+										<div className="">
+											<Modal
+												open={open}
+												onClose={handleClose}
+												aria-labelledby="modal-modal-title"
+												aria-describedby="modal-modal-description"
+											>
+												<Box sx={style}>
+													<Info
+														beach={temp.beach}
+														probability={
+															temp.probability
+														}
+														low={temp.low}
+														high={temp.high}
+													/>
+												</Box>
+											</Modal>
+										</div>
+									</>
+								)}
+							</div>
+						)}
+					</GoogleMap>
+				)}
+			</div>
 		</div>
 	);
 }
