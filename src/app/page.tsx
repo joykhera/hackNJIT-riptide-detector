@@ -2,6 +2,7 @@ import Navbar from "./components/navbar";
 import SearchBar from "./components/SearchBar";
 import MapSection from "./components/Map/MapSection";
 
+
 export default function Home() {
 	return (
 		<main>
@@ -9,7 +10,7 @@ export default function Home() {
 				<Navbar />
 				{/* <SearchBar /> */}
 			</div>
-			<div className="w-full h-screen bg-gray-200">
+			<div className="w-full h-screen bg-white-200">
 				<div className="w-full h-full pt-6">
 					<MapSection
 						API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
