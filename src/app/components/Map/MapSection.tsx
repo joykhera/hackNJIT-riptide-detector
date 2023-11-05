@@ -26,15 +26,21 @@ interface Data {
 interface InfoData {
 	beach: string;
 	probability: number;
-	low: number;
-	high: number;
+	windspeed: number;
+	waveheight: number;
+	temp: number;
+	cape: number;
+	rain: number;
 }
 
 const temp: InfoData = {
 	beach: "PT. Pleseant",
 	probability: 12,
-	low: 1,
-	high: 3,
+	windspeed: 1,
+	waveheight: 3,
+	temp: 5,
+	cape: 2,
+	rain: 1,
 };
 
 export default function DashboardPage({ API }: Data) {
@@ -104,6 +110,17 @@ export default function DashboardPage({ API }: Data) {
 	const [open, setOpen] = React.useState(false);
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
+	const [infoData, setInfoData] = React.useState({});
+
+	async function getData(lat: number, long: number) {
+		// GET request using fetch with async/await
+		const response = await fetch(
+			`localhost:3000/tideData?lat=${lat}&long=${long}`
+		);
+		const data = await response.json();
+		setInfoData(data);
+		console.log(data);
+	}
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -212,8 +229,11 @@ export default function DashboardPage({ API }: Data) {
 													probability={
 														temp.probability
 													}
-													low={temp.low}
-													high={temp.high}
+													windspeed={temp.windspeed}
+													waveheight={temp.waveheight}
+													temp={temp.temp}
+													cape={temp.cape}
+													rain={temp.rain}
 												/>
 											</Box>
 										</Modal>
