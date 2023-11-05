@@ -17,7 +17,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         return NextResponse.json({ error: 'Invalid or missing latitude or longitude query parameters' });
     }
 
-    const response = await fetch(WINDY_API_LINK, {
+    const windResponse = await fetch(WINDY_API_LINK, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -26,14 +26,35 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
             "lat": Number(lat),
             "lon": Number(long),
             "model": "gfs",
-            "parameters": ["temp", "precip", "windGust", "cape", "ptype", "wind"],
+            "parameters": ["temp", "precip", "windGust", "cape", "wind"],
             "levels": ["surface"],
             "key": process.env.WINDY_API_KEY
         }),
     });
 
-    const data = await response.json();
-    const riptideData = calculateRiptideData(data);
+    const waveResponse = await fetch(WINDY_API_LINK, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "lat": Number(lat),
+            "lon": Number(long),
+            "model": "gfsWave",
+            "parameters": ["waves"],
+            "levels": ["surface"],
+            "key": process.env.WINDY_API_KEY
+        }),
+    });
 
+    const windData = await windResponse.json();
+    const waveData = await waveResponse.json();
+    const data = {
+        ...windData,
+        ...waveData,
+    };
+
+    const riptideData = calculateRiptideData(data);
+    console.log(riptideData)
     return NextResponse.json({ riptideData });
 }

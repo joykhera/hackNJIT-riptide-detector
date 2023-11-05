@@ -6,7 +6,10 @@ interface ApiResponse {
     'temp-surface'?: number[],
     'cape-surface'?: number[],
     'ptype-surface'?: number[],
-    'mclouds-surface'?: number[]
+    'mclouds-surface'?: number[],
+    'waves_height-surface'?: number[],
+    'waves_direction-surface'?: number[],
+    'waves_period-surface'?: number[]
 }
 
 interface RiptideData {
@@ -16,6 +19,9 @@ interface RiptideData {
     temp?: number,
     cape?: number,
     ptype?: number,
+    windDirection?: number,
+    waveDirection?: number,
+    wavePeriod?: number
 }
 
 export function calculateRiptideData(response: ApiResponse): RiptideData {
@@ -27,51 +33,59 @@ export function calculateRiptideData(response: ApiResponse): RiptideData {
             let highRiskConditionMet = false;
 
             // Check for specific high risk conditions
-            // Example: If temperature is above a certain value, consider it high risk
-            if (response['temp-surface']![index] && response['temp-surface']![index] > 305) {
+            if (response['temp-surface']![index] > 305) {
                 highRiskConditionMet = true;
             }
 
             if (
                 response['gust-surface']?.[index] !== undefined &&
-                response['past3hprecip-surface']?.[index] !== undefined &&
-                response['cape-surface']?.[index] !== undefined &&
-                response['ptype-surface']?.[index] !== undefined
+                response['waves_height-surface']?.[index] !== undefined &&
+                response['wind_u-surface']?.[index] !== undefined &&
+                response['wind_v-surface']?.[index] !== undefined &&
+                response['waves_period-surface']?.[index] !== undefined
             ) {
                 const windSpeedScore = normalize(response['gust-surface'][index], 0, 20);
-                const waveHeightScore = normalize(response['past3hprecip-surface'][index], 0, 0.005);
+                const waveHeightScore = normalize(response['waves_height-surface'][index], 0, 5);
                 const tempScore = normalize(response['temp-surface']![index], 270, 310);
-                const capeScore = normalize(response['cape-surface']![index], 0, 50);
-                const ptypeScore = response['ptype-surface'][index] > 0 ? 1 : 0;
+                const capeScore = normalize(response['cape-surface']![index], 0, 100);
+                
+                // Calculate wind and wave direction influence
+                const windDirection = response['wind_u-surface'][index] !== undefined && response['wind_v-surface'][index] !== undefined
+                    ? Math.atan2(response['wind_v-surface'][index], response['wind_u-surface'][index]) * (180 / Math.PI)
+                    : 0;
+                const waveDirection = response['waves_direction-surface']?.[index] ?? 0;
 
-                const weightedScore = Math.pow(windSpeedScore, 2) * 0.3 + waveHeightScore * 0.3 + tempScore * 0.1 + capeScore * 0.2 + ptypeScore * 0.1
+                // Directional difference can influence the riptide risk
+                const directionDifference = normalize(Math.abs(windDirection - waveDirection), 0, 180);
+
+                // Wave period can also influence the risk
+                const wavePeriodScore = normalize(response['waves_period-surface'][index], 5, 20);
+
+                const weightedScore = windSpeedScore * 0.25 + waveHeightScore * 0.25 + tempScore * 0.1 + capeScore * 0.2 + directionDifference * 0.1 + wavePeriodScore * 0.1;
                 const riptideProbability = sigmoid(weightedScore);
-                // const riptideProbability = weightedScore;
+
                 riptideScores.push(riptideProbability);
             } else if (highRiskConditionMet) {
-                // If a high risk condition is met, push 1
                 riptideScores.push(1);
             } else {
-                // If no high risk condition is met, push 0 or some other default value
                 riptideScores.push(0);
             }
         });
     }
 
     return {
-        probability: riptideScores[riptideScores.length - 1],
-        windSpeed: response['gust-surface']?.[response['gust-surface']?.length - 1],
-        waveHeight: response['past3hprecip-surface']?.[response['past3hprecip-surface']?.length - 1],
-        temp: response['temp-surface']?.[response['temp-surface']?.length - 1],
-        cape: response['cape-surface']?.[response['cape-surface']?.length - 1],
-        ptype: response['ptype-surface']?.[response['ptype-surface']?.length - 1],
+        probability: response['waves_height-surface']?.[response['waves_height-surface']?.length - 1] ? riptideScores[riptideScores.length - 1] : 0,
+        windSpeed: response['gust-surface']?.[response['gust-surface']?.length - 1] || 0,
+        waveHeight: response['waves_height-surface']?.[response['waves_height-surface']?.length - 1] || 0,
+        temp: response['temp-surface']?.[response['temp-surface']?.length - 1] || 0,
+        cape: response['cape-surface']?.[response['cape-surface']?.length - 1] || 0,
+        windDirection: response['wind_u-surface']?.[response['wind_u-surface']?.length - 1] || 0,
+        waveDirection: response['waves_direction-surface']?.[response['waves_direction-surface']?.length - 1] || 0,
+        wavePeriod: response['waves_period-surface']?.[response['waves_period-surface']?.length - 1] || 0,
     };
 }
 
 function normalize(value: number, min: number, max: number): number {
-    if (max === min) {
-        return 0;
-    }
     return (value - min) / (max - min);
 }
 

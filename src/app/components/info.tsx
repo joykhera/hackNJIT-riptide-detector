@@ -4,42 +4,46 @@ import Alert from "@mui/material/Alert";
 interface Data {
 	beach: string;
 	probability: number;
-	windspeed: number;
-	waveheight: number;
+	waveHeight: number;
+	waveDirection: number;
+	wavePeriod: number,
+	windSpeed: number;
+	windDirection: number;
 	temp: number;
-	cape: number;
-	rain: number;
 }
 
 const temp: Data = {
 	beach: "PT. Pleseant",
 	probability: 12,
-	windspeed: 1,
-	waveheight: 3,
+	waveHeight: 3,
+	waveDirection: 1,
+	wavePeriod: 2,
+	windSpeed: 1,
+	windDirection: 2,
 	temp: 5,
-	cape: 2,
-	rain: 1,
 };
 
 function info({
 	beach,
 	probability,
-	windspeed,
-	waveheight,
-	temp,
-	cape,
-	rain,
+	waveHeight,
+	waveDirection,
+	wavePeriod,
+	windSpeed,
+	windDirection,
+	temp
 }: Data) {
 	const numRows = 6;
 	const numCols = 2;
 
 	const tableData = [
 		["Riptide (%)", probability],
-		["Wind Speed (MpH)", windspeed],
-		["Wave Height (M)", waveheight],
+		["Wave Height (M)", waveHeight],
+		["Wave Direction", waveDirection],
+		["Wave Period", wavePeriod],
+		["Wind Speed (mph)", windSpeed],
+		["Wind Direction", windDirection],
 		["Temperature (F)", temp],
-		["Cape (J/Kg)", cape],
-		["Rain", rain],
 	];
 	const isRiptide = probability > 50;
 
