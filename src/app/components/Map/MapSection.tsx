@@ -90,7 +90,7 @@ export default function MapSection() {
 		}
 		try {
 			const response = await fetch(
-				`http://localhost:3000/tideData?lat=${lat}&long=${long}`
+				`${location.href}tideData?lat=${lat}&long=${long}`
 			);
 			console.log(response);
 			const data = await response.json();
