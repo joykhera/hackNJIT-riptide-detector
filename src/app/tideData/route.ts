@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             "model": "gfs",
             "parameters": ["temp", "precip", "windGust", "cape", "wind"],
             "levels": ["surface"],
-            "key": 'mxJHtiUTFWroYO4ePZ7ZCnjB7EAjoGss'
+            "key": 'I3xCjSuzffTbAQIucnsitNjy6b3E76O6'
         }),
     });
 
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             "model": "gfsWave",
             "parameters": ["waves"],
             "levels": ["surface"],
-            "key": 'mxJHtiUTFWroYO4ePZ7ZCnjB7EAjoGss'
+            "key": 'I3xCjSuzffTbAQIucnsitNjy6b3E76O6'
         }),
     });
 
