@@ -11,7 +11,8 @@ from "@react-google-maps/api";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
-
+// import dotenv from 'dotenv'
+// dotenv.config({ path: '../../.env' })
 export const DEFAULT_DISTANCE_IN_KM =  "100";
 
 const configureSchema = Yup.object().shape({
@@ -35,7 +36,6 @@ async function getLatLonForCity(city: string) {
 
 export type Place = {
     name:string;
-    address:string;
     latitude:number;
     longitude:number;
 };
@@ -44,7 +44,6 @@ export default function DashboardPage() {
   const [places, setPlaces] = useState<Place[]>([
     {
       name: "Burger City",
-      address: "999 Some Street, New York City, NY",
       latitude: 40.7,
       longitude: -74.0,
     },
@@ -61,7 +60,7 @@ export default function DashboardPage() {
   });
 
   const [selectedPlace, setSelectedPlace] = useState<Place | undefined> (
-    undefined
+    places[0]
   );
 
   return (
@@ -73,7 +72,16 @@ export default function DashboardPage() {
         validationSchema={configureSchema}
         onSubmit={async (formData) => {
           const { lat, lon } = await getLatLonForCity(formData.city);
-          setPosition({ lat, lon });
+          setPosition({ lat, lon })
+          const newPlace = [
+            {
+              name: formData.city,  
+              latitude: lat,
+              longitude: lon,
+            },
+          ]
+          setPlaces(newPlace)
+          setSelectedPlace(newPlace[0])
         }}
         >
           {({ errors }) => (
@@ -109,7 +117,7 @@ export default function DashboardPage() {
           >
             {places.map((place) => (
               <MarkerF
-                key={`${place.address}-${place.name}-${place.latitude}-${place.longitude}`}
+                key={`${place.name}-${place.latitude}-${place.longitude}`}
                 onClick={() => {
                   place === selectedPlace
                     ? setSelectedPlace(undefined)
@@ -135,7 +143,6 @@ export default function DashboardPage() {
             >
               <div>
                 <h3>{selectedPlace.name}</h3>
-                <p>{selectedPlace.address}</p>
               </div>
             </InfoWindowF>
           )}
