@@ -1,10 +1,9 @@
-import { NextResponse } from "next/server";
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from "next/server";
 import { calculateRiptideData } from "./calculations";
 
 const WINDY_API_LINK = 'https://api.windy.com/api/point-forecast/v2';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
     const url = new URL(req.url!);
 
     const queryParams = new URLSearchParams(url.search);
