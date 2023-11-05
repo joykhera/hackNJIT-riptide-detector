@@ -1,5 +1,5 @@
 import React from "react";
-import Info from "../../components/info";
+import Info from "../components/info";
 
 interface Data {
 	beach: string;
