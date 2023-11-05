@@ -8,15 +8,37 @@ import { useMapApiLoader } from '@/contexts/MapApiLoaderContext';
 
 interface Data {
 	API: string;
+    position: {
+        lat: number;
+        lon: number;
+    };
+    setPosition: (position: { lat: number; lon: number }) => void;
 }
 
-function SearchBar() {
+function SearchBar({ API, position, setPosition }: Data) {
     const libraries: Libraries = ["places"];
     const { isLoaded, loadError } = useMapApiLoader();
 
     const handleSearch = () => {
         const addressInput = (document.getElementById('autocomplete') as HTMLInputElement)?.value;
-        console.log("searching for: ", addressInput);
+
+        const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(addressInput)}&key=${API}`;
+        fetch(geocodingUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'OK' && data.results.length > 0) {
+                const location = data.results[0].geometry.location;
+                const latitude = location.lat;
+                const longitude = location.lng;
+                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                setPosition({ lat: latitude, lon: longitude });
+                } else {
+                console.error('Geocoding failed for the given address.');
+                }
+            })
+            .catch(error => {
+                console.error('Error while geocoding:', error);
+            });
     }
 
     if (loadError) return 'Error loading maps';
@@ -24,14 +46,16 @@ function SearchBar() {
 
     return (
         <div className="flex items-center justify-center mt-4">
-          <div className="relative w-64">
-            <input
-              className="w-full px-4 py-2 text-black border rounded-lg"
-              id="autocomplete"
-              placeholder="Enter a location"
-              type="text"
-            />
-          </div>
+          {/* <div className="relative w-64"> */}
+            <Autocomplete className='relative w-64'>
+              <input
+                className="w-full px-4 py-2 text-black border rounded-lg"
+                id="autocomplete"
+                placeholder="Enter a location"
+                type="text"
+              />
+            </Autocomplete>
+          {/* </div> */}
           <button
             onClick={handleSearch}
             className="ml-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"

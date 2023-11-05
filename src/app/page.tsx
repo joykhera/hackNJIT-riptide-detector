@@ -11,7 +11,7 @@ export default function Home() {
 			<MapApiLoaderProvider apiKey="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI">
 				<div className="h-20 bg-header-blue">
 					<Navbar />
-					<SearchBar />
+					{/* <SearchBar API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI" /> */}
 				</div>
 				<div className="w-full h-screen bg-gray-200">
 					<div className="w-full h-full pt-6">

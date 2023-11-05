@@ -42,7 +42,7 @@ export default function MapSection({API}: {API: string}) {
 	const { isLoaded, loadError } = useMapApiLoader();
 	const [places, setPlaces] = useState<Place[]>([
 		{
-			name: "Burger City",
+			name: "Hoboken",
 			latitude: 40.7,
 			longitude: -74.0,
 		},
@@ -106,8 +106,15 @@ export default function MapSection({API}: {API: string}) {
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
+	console.log(position);
+
 	return (
 		<div className="flex flex-col gap-4 mt-12">
+			<SearchBar 
+				API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
+				position={position}
+				setPosition={setPosition}
+			/>
 			{isLoaded && (
 				<GoogleMap
 					mapContainerStyle={containerStyle}
