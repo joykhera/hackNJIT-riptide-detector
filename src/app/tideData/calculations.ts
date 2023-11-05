@@ -48,7 +48,7 @@ export function calculateRiptideData(response: ApiResponse): RiptideData {
                 const waveHeightScore = normalize(response['waves_height-surface'][index], 0, 5);
                 const tempScore = normalize(response['temp-surface']![index], 270, 310);
                 const capeScore = normalize(response['cape-surface']![index], 0, 100);
-                
+
                 // Calculate wind and wave direction influence
                 const windDirection = response['wind_u-surface'][index] !== undefined && response['wind_v-surface'][index] !== undefined
                     ? Math.atan2(response['wind_v-surface'][index], response['wind_u-surface'][index]) * (180 / Math.PI)
@@ -61,7 +61,7 @@ export function calculateRiptideData(response: ApiResponse): RiptideData {
                 // Wave period can also influence the risk
                 const wavePeriodScore = normalize(response['waves_period-surface'][index], 5, 20);
 
-                const weightedScore = windSpeedScore * 0.25 + waveHeightScore * 0.25 + tempScore * 0.1 + capeScore * 0.2 + directionDifference * 0.1 + wavePeriodScore * 0.1;
+                const weightedScore = windSpeedScore * 0.25 + waveHeightScore * 1 + tempScore * 0.1 + capeScore * 0.2 + directionDifference * 0.1 + wavePeriodScore * 0.1;
                 const riptideProbability = sigmoid(weightedScore);
 
                 riptideScores.push(riptideProbability);

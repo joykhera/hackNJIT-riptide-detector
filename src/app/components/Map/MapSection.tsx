@@ -32,8 +32,8 @@ const dummy: InfoData = {
 };
 
 function round(num: number, places: number) {
-    var multiplier = Math.pow(10, places);
-    return (Math.round(num * multiplier) / multiplier)*100;
+	var multiplier = Math.pow(10, places);
+	return (Math.round(num * multiplier) / multiplier) * 100;
 }
 
 export default function MapSection() {
@@ -95,7 +95,7 @@ export default function MapSection() {
 		}
 		try {
 			const response = await fetch(
-			`http://localhost:3000/tideData?lat=${lat}&long=${long}`
+				`http://localhost:3000/tideData?lat=${lat}&long=${long}`
 			);
 			const data = await response.json();
 			const res = data.riptideData;
@@ -126,13 +126,13 @@ export default function MapSection() {
 		p: 4,
 	};
 
-	const handleOpen = () => {setSelectedPlace(places[0]); setOpen(true);};
-	const handleClose = () => {setSelectedPlace(undefined); setOpen(false);};
+	const handleOpen = () => { setSelectedPlace(places[0]); setOpen(true); };
+	const handleClose = () => { setSelectedPlace(undefined); setOpen(false); };
 
 	const textColorClass =
-    percentage >= 0.5
-      ? "text-red-500" // Apply green text color when percentage is greater than or equal to 70
-      : "text-green-500";  // Apply red text color otherwise
+		percentage >= 0.5
+			? "text-red-500" // Apply green text color when percentage is greater than or equal to 70
+			: "text-green-500";  // Apply red text color otherwise
 
 	return (
 		<div className="w-full h-full">
@@ -206,42 +206,13 @@ export default function MapSection() {
 												<Box sx={style}>
 													<Info
 														beach={infoData.beach}
-														probability={Number(
-															infoData.probability.toFixed(
-																3
-															)
-														)}
-														waveHeight={Number(
-															infoData.waveHeight.toFixed(
-																3
-															)
-														)}
-														waveDirection={Number(
-															infoData.waveDirection.toFixed(
-																3
-															)
-														)}
-														wavePeriod={Number(
-															infoData.wavePeriod.toFixed(
-																3
-															)
-														)}
-														windSpeed={Number(
-															infoData.windSpeed.toFixed(
-																3
-															)
-														)}
-														windDirection={Number(
-															infoData.windDirection.toFixed(
-																3
-															)
-														)}
-														temp={Number(
-															kToF(
-																infoData.temp
-															).toFixed(3)
-														)}
-		
+														probability={Number(infoData.probability.toFixed(3))}
+														waveHeight={Number(infoData.waveHeight.toFixed(3))}
+														waveDirection={Number(infoData.waveDirection.toFixed(3))}
+														wavePeriod={Number(infoData.wavePeriod.toFixed(3))}
+														windSpeed={Number(infoData.windSpeed.toFixed(3))}
+														windDirection={Number(infoData.windDirection.toFixed(3))}
+														temp={Number(kToF(infoData.temp).toFixed(3))}
 													/>
 												</Box>
 											</Modal>
