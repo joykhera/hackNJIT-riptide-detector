@@ -1,100 +1,45 @@
 "use client"
 import React from 'react';
-import { ReactSearchAutocomplete } from 'react-search-autocomplete';
-type Item = {
-    id: number;
-    name: string;
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
+import { useMapApiLoader } from '@/contexts/MapApiLoaderContext';
+
+// const MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+
+interface Data {
+	API: string;
 }
 
 function SearchBar() {
-    const items = [
-        {
-            id: 0,
-            name: "san_francisco_ca"
-        },
-        {
-            id: 1,
-            name: "the_Battery_ny"
-        },
-        {
-            id: 2,
-            name: "rehoboth_beach_md"
-        },
-        {
-            id: 3,
-            name: "key_west_fl"
-        },
-        {
-            id: 4,
-            name: "providence_visibility"
-        },
-        {
-            id: 5,
-            name: "cape_henry_ports_station"
-        },
-        {
-            id: 6,
-            name: "southport_nc"
-        },
-        {
-            id: 7,
-            name: "eastport_estes_head"
-        },
-        {
-            id: 8,
-            name: "grays_harbor_entrance_wa"
-        },
-        {
-            id: 9,
-            name: "sewells_point_va"
-        },
-        {
-            id: 10,
-            name: "buffalo_ny"
-        }
-    ]
+    const libraries: Libraries = ["places"];
+    const { isLoaded, loadError } = useMapApiLoader();
 
-    const handleOnSearch = (string: string, results: Item[]) => {
-        console.log(string, results);
-    };
-
-    const handleOnHover = (result: Item) => {
-        console.log(result);
-    };
-
-    const handleOnSelect = (item: Item) => {
-        console.log(item);
-    };
-
-    const formatResult = (beach: Item) => {
-        return (
-            <span style={{ display: 'block', textAlign: 'left' }}>{beach.name}</span>
-        );
-    };
-    
-    const handleFocus = () => {
-        console.log('Focused');
+    const handleSearch = () => {
+        const addressInput = (document.getElementById('autocomplete') as HTMLInputElement)?.value;
+        console.log("searching for: ", addressInput);
     }
 
+    if (loadError) return 'Error loading maps';
+    if (!isLoaded) return 'Loading Maps';
+
     return (
-        <div className="App">
-            <header className="App-header">
-                <div style={{ width: 400 }}>
-                    <ReactSearchAutocomplete
-                        items={items}
-                        onSearch={handleOnSearch}
-                        onHover={handleOnHover}
-                        onSelect={handleOnSelect}
-                        autoFocus
-                        onFocus={handleFocus}
-                        formatResult={formatResult}
-                        showItemsOnFocus={true}
-                        maxResults={items.length}
-                    />
-                </div>
-            </header>
+        <div className="flex items-center justify-center mt-4">
+          <div className="relative w-64">
+            <input
+              className="w-full px-4 py-2 text-black border rounded-lg"
+              id="autocomplete"
+              placeholder="Enter a location"
+              type="text"
+            />
+          </div>
+          <button
+            onClick={handleSearch}
+            className="ml-4 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+          >
+            Search
+          </button>
         </div>
-    );
+      );      
 }
 
 export default SearchBar;
