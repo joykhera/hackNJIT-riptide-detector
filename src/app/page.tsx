@@ -5,6 +5,7 @@ import SearchBar from "./components/SearchBar";
 import MapSection from "./components/Map/MapSection";
 import { MapApiLoaderProvider } from "@/contexts/MapApiLoaderContext";
 
+
 export default function Home() {
 	return (
     <main>
