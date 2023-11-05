@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 
 interface Data {
 	beach: string;
@@ -8,9 +8,7 @@ interface Data {
 }
 
 function info({ beach, probability, low, high }: Data) {
-	return (
-		<div className="bg-white p-4 shadow-md rounded-md w-1/2 h-60">here</div>
-	);
+	return <div className="">here</div>;
 }
 
 export default info;
