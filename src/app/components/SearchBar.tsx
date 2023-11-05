@@ -1,48 +1,71 @@
-"use client"
-import React from 'react';
-import { useLoadScript, Autocomplete } from '@react-google-maps/api';
-import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
-import { useMapApiLoader } from '@/contexts/MapApiLoaderContext';
+"use client";
+import React from "react";
+import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+import { Libraries } from "@react-google-maps/api/dist/utils/make-load-script-url";
+import { useMapApiLoader } from "@/contexts/MapApiLoaderContext";
 
 // const MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+type Place = {
+	name: string;
+	lat: number;
+	lon: number;
+};
 
 interface Data {
 	API: string;
-    position: {
-        lat: number;
-        lon: number;
-    };
-    setPosition: (position: { lat: number; lon: number }) => void;
+	position: {
+		lat: number;
+		lon: number;
+	};
+	setPosition: (position: { lat: number; lon: number }) => void;
+	places: {
+		name: string;
+		lat: number;
+		lon: number;
+	};
+	setPlaces: (places: Place[]) => void;
 }
 
-function SearchBar({ API, position, setPosition }: Data) {
-    const libraries: Libraries = ["places"];
-    const { isLoaded, loadError } = useMapApiLoader();
+function SearchBar({ API, position, setPosition, places, setPlaces }: Data) {
+	const { isLoaded, loadError } = useMapApiLoader();
 
-    const handleSearch = () => {
-        const addressInput = (document.getElementById('autocomplete') as HTMLInputElement)?.value;
+	const handleSearch = () => {
+		const addressInput = (
+			document.getElementById("autocomplete") as HTMLInputElement
+		)?.value;
 
-        const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(addressInput)}&key=${API}`;
-        fetch(geocodingUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'OK' && data.results.length > 0) {
-                const location = data.results[0].geometry.location;
-                const latitude = location.lat;
-                const longitude = location.lng;
-                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                setPosition({ lat: latitude, lon: longitude });
-                } else {
-                console.error('Geocoding failed for the given address.');
-                }
-            })
-            .catch(error => {
-                console.error('Error while geocoding:', error);
-            });
-    }
+		const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+			addressInput
+		)}&key=${API}`;
+		fetch(geocodingUrl)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.status === "OK" && data.results.length > 0) {
+					const location = data.results[0].geometry.location;
+					const latitude = location.lat;
+					const longitude = location.lng;
+					console.log(
+						`Latitude: ${latitude}, Longitude: ${longitude}`
+					);
+					setPosition({ lat: latitude, lon: longitude });
+					setPlaces([
+						{
+							name: addressInput.split(" ")[0],
+							lat: latitude,
+							lon: longitude,
+						},
+					]);
+				} else {
+					console.error("Geocoding failed for the given address.");
+				}
+			})
+			.catch((error) => {
+				console.error("Error while geocoding:", error);
+			});
+	};
 
-    if (loadError) return 'Error loading maps';
-    if (!isLoaded) return 'Loading Maps';
+	if (loadError) return "Error loading maps";
+	if (!isLoaded) return "Loading Maps";
 
     return (
         <div className="flex items-center justify-center px-3 py-2 mt-2 bg-header-blue">
@@ -64,6 +87,7 @@ function SearchBar({ API, position, setPosition }: Data) {
           </button>
         </div>
       );      
+
 }
 
 export default SearchBar;

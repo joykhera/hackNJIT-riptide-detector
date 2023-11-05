@@ -12,7 +12,6 @@ import Modal from "@mui/material/Modal";
 
 import Box from "@mui/material/Box";
 
-import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
 import SearchBar from "../SearchBar";
@@ -25,18 +24,27 @@ interface Data {
 	API: string;
 }
 
+interface Riptide {
+	riptideData: InfoData;
+}
 interface InfoData {
 	beach: string;
 	probability: number;
-	low: number;
-	high: number;
+	windSpeed: number;
+	waveHeight: number;
+	temp: number;
+	cape: number;
+	ptype: number;
 }
 
 const temp: InfoData = {
 	beach: "PT. Pleseant",
 	probability: 12,
-	low: 1,
-	high: 3,
+	windSpeed: 1,
+	waveHeight: 3,
+	temp: 5,
+	cape: 2,
+	ptype: 1,
 };
 
 export default function MapSection({ API }: { API: string }) {
@@ -44,13 +52,13 @@ export default function MapSection({ API }: { API: string }) {
 	const [places, setPlaces] = useState<Place[]>([
 		{
 			name: "Hoboken",
-			latitude: 40.7,
-			longitude: -74.0,
+			lat: 40.7,
+			lon: -74.0,
 		},
 	]);
 	const [position, setPosition] = useState({
-		lat: places[0].latitude,
-		lon: places[0].longitude,
+		lat: places[0].lat,
+		lon: places[0].lon,
 	});
 
 	const [isFirst, setFirst] = useState(true);
@@ -77,10 +85,11 @@ export default function MapSection({ API }: { API: string }) {
 		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
 	}, [position,]);
 
+	const [infoData, setInfoData] = useState<InfoData>(temp);
 
-	const configureSchema = Yup.object().shape({
-		city: Yup.string().required("Required"),
-	});
+	useEffect(() => {
+		getData(position.lat, position.lon);
+	}, [position]);
 
 	if (loadError) return <div>Error loading maps</div>;
 	if (!isLoaded) return <div>Loading Maps</div>;
@@ -91,20 +100,22 @@ export default function MapSection({ API }: { API: string }) {
 		// position: "absolute"
 	};
 
-	async function getLatLonForCity(city: string) {
-		const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-			city + ", USA"
-		)}&key=${API}`;
-		const geocodeResponse = await fetch(geocodeUrl);
-		const geocodeData = await geocodeResponse.json();
-		const { lat, lng } = geocodeData.results[0].geometry.location;
-		return { lon: lng, lat };
+	async function getData(lat: number, long: number) {
+		const response = await fetch(
+			`http://localhost:3000/tideData?lat=${lat}&long=${long}`
+		);
+		const data = await response.json();
+		const res = data.riptideData;
+
+		console.log(res);
+		setInfoData(res);
+		// console.log(infoData);
 	}
 
 	type Place = {
 		name: string;
-		latitude: number;
-		longitude: number;
+		lat: number;
+		lon: number;
 	};
 
 	function timeout(delay: number) {
@@ -126,16 +137,15 @@ export default function MapSection({ API }: { API: string }) {
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
-	console.log(position);
-
 	return (
 		<div className="w-full h-full">
 				<div id='searchBar' className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10`}>
-				{/* <div id='searchBar' > */}
 				<SearchBar
 					API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
 					position={position}
 					setPosition={setPosition}
+					places={places[0]}
+					setPlaces={setPlaces}
 				/>
 			</div>
 			<div className="flex flex-col gap-4 w-full h-full">
@@ -145,15 +155,15 @@ export default function MapSection({ API }: { API: string }) {
 						center={{ lat: position.lat, lng: position.lon }}
 						zoom={13}
 					>
-						{!isFirst && (
+						{
 							<div>
 								{places.map((place) => (
 									<MarkerF
-										key={`${place.name}-${place.latitude}-${place.longitude}`}
+										key={`${place.name}-${place.lat}-${place.lon}`}
 										onClick={handleOpen}
 										position={{
-											lat: place.latitude,
-											lng: place.longitude,
+											lat: place.lat,
+											lng: place.lon,
 										}}
 										animation={
 											window.google.maps.Animation.DROP
@@ -164,15 +174,16 @@ export default function MapSection({ API }: { API: string }) {
 									<>
 										<InfoWindowF
 											position={{
-												lat: selectedPlace.latitude,
-												lng: selectedPlace.longitude,
+												lat: selectedPlace.lat,
+												lng: selectedPlace.lon,
 											}}
 											zIndex={1}
 											options={{
-												pixelOffset: new google.maps.Size(
-													0,
-													-40
-												),
+												pixelOffset:
+													new google.maps.Size(
+														0,
+														-40
+													),
 											}}
 											onCloseClick={() =>
 												setSelectedPlace(undefined)
@@ -191,12 +202,19 @@ export default function MapSection({ API }: { API: string }) {
 											>
 												<Box sx={style}>
 													<Info
-														beach={temp.beach}
+														beach={infoData.beach}
 														probability={
-															temp.probability
+															infoData.probability
 														}
-														low={temp.low}
-														high={temp.high}
+														windspeed={
+															infoData.windSpeed
+														}
+														waveheight={
+															infoData.waveHeight
+														}
+														temp={infoData.temp}
+														cape={infoData.cape}
+														rain={infoData.ptype}
 													/>
 												</Box>
 											</Modal>
@@ -204,7 +222,7 @@ export default function MapSection({ API }: { API: string }) {
 									</>
 								)}
 							</div>
-						)}
+						}
 					</GoogleMap>
 				)}
 			</div>
