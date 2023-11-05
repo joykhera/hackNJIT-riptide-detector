@@ -57,7 +57,7 @@ export default function MapSection() {
 	useEffect(() => {
 		getData(position.lat, position.lon);
 
-		if (mountedNum.current < (location.hostname == 'localhost' ? 2 : 1)) {
+		if (mountedNum.current < 2) {
 			mountedNum.current += 1;
 			return;
 		}
