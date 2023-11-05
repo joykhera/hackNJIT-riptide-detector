@@ -154,7 +154,7 @@ export default function MapSection() {
 					>
 						{
 							<div>
-								{isFirst.current > 2 && places.map((place) => (
+								{isFirst.current > (location.hostname == 'localhost' ? 2 : 1) && places.map((place) => (
 									<MarkerF
 										key={`${place.name}-${place.lat}-${place.lon}`}
 										onClick={handleOpen}
