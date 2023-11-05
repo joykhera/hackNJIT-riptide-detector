@@ -34,11 +34,11 @@ function info({
 	const numCols = 2;
 
 	const tableData = [
-		["Riptide %", probability],
-		["Wind Speed", windspeed],
-		["Wave Height", waveheight],
-		["Temperature", temp],
-		["Cape", cape],
+		["Riptide (%)", probability],
+		["Wind Speed (MpH)", windspeed],
+		["Wave Height (M)", waveheight],
+		["Temperature (F)", temp],
+		["Cape (J/Kg)", cape],
 		["Rain", rain],
 	];
 	const isRiptide = probability > 50;
