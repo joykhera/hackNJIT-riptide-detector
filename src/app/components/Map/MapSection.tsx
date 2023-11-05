@@ -16,6 +16,7 @@ import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
 import SearchBar from "../SearchBar";
 import { useMapApiLoader } from "@/contexts/MapApiLoaderContext";
+import anime from "animejs";
 
 export const DEFAULT_DISTANCE_IN_KM = "100";
 
@@ -59,11 +60,31 @@ export default function MapSection({ API }: { API: string }) {
 		lat: places[0].lat,
 		lon: places[0].lon,
 	});
+
 	const [isFirst, setFirst] = useState(true);
+	const mountedNum = useRef(0);
 	const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(
 		places[0]
 	);
 	const [open, setOpen] = useState(false);
+	const cityRef = useRef(undefined);
+
+	useEffect(() => {
+		if (mountedNum.current < 2) {
+			mountedNum.current += 1;
+			return;
+		}
+		console.log(window.innerWidth, window.innerHeight);
+		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
+		anime({
+			targets: '#searchBar',
+			translateX: -(window.innerWidth / 10),
+			translateY: -(window.innerHeight / 2) + 80,
+			duration: 3000,
+		});
+		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
+	}, [position,]);
+
 	const [infoData, setInfoData] = useState<InfoData>(temp);
 
 	useEffect(() => {
@@ -75,7 +96,8 @@ export default function MapSection({ API }: { API: string }) {
 
 	const containerStyle = {
 		width: "100%",
-		height: "650px",
+		height: "100%",
+		// position: "absolute"
 	};
 
 	async function getData(lat: number, long: number) {
@@ -116,8 +138,8 @@ export default function MapSection({ API }: { API: string }) {
 	const handleClose = () => setOpen(false);
 
 	return (
-		<div>
-			<div className="">
+		<div className="w-full h-full">
+				<div id='searchBar' className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10`}>
 				<SearchBar
 					API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
 					position={position}
@@ -126,7 +148,7 @@ export default function MapSection({ API }: { API: string }) {
 					setPlaces={setPlaces}
 				/>
 			</div>
-			<div className="flex flex-col gap-4 mt-12">
+			<div className="flex flex-col gap-4 w-full h-full">
 				{isLoaded && (
 					<GoogleMap
 						mapContainerStyle={containerStyle}
