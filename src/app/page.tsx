@@ -1,6 +1,7 @@
 import Navbar from "./components/navbar";
 import MapView from "./pages/landingPage/mapView";
-import MapSection from "./components/Map/MapSection";
+import MapSection from "./components/Map/MapSection"
+
 
 export default function Home() {
 	return (
@@ -11,7 +12,8 @@ export default function Home() {
 			<div className="w-full h-screen bg-gray-200">
 				<div className="w-full h-full pt-6">
 					<MapView />
-					<MapSection />
+          <MapSection API={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}/>
+
 				</div>
 			</div>
 		</main>
