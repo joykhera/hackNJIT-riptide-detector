@@ -7,21 +7,6 @@ type Item = {
 }
 
 function SearchBar() {
-    // note: the id field is mandatory
-    // const beaches: Item[] = [
-    //     { id: "san_francisco_ca" },
-    //     { id: "the_Battery_ny" },
-    //     { id: "rehoboth_beach_md" },
-    //     { id: "key_west_fl" },
-    //     { id: "providence_visibility" },
-    //     { id: "cape_henry_ports_station" },
-    //     { id: "southport_nc" },
-    //     { id: "eastport_estes_head" },
-    //     { id: "grays_harbor_entrance_wa" },
-    //     { id: "sewells_point_va" },
-    //     { id: "buffalo_ny" },
-    // ];
-
     const items = [
         {
             id: 0,

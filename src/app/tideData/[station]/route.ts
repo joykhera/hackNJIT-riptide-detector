@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { beaches } from '../beaches';
 
-console.log('keyof typeof beaches;', )
 type BeachNameType = keyof typeof beaches;
 
 interface DataPoint {
@@ -52,16 +51,18 @@ function estimateRipCurrentProbability(changes: number[]): number {
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const stationName = req.url!.split('/')[4] as BeachNameType;
     const queryParams = new URLSearchParams(apiOptions).toString();
+    if (!stationName || !(stationName in beaches)) return NextResponse.json({ error: 'Invalid station name' });
     const station = beaches[stationName]
     const apiUrl = `${NOAA_API_LINK}?${queryParams}&station=${station}`;
-    // console.log(apiUrl);
-    const response = await fetch(apiUrl);
-    const responseData = await response.json();
-    // console.log(responseData);
+    try {
+        const response = await fetch(apiUrl);
+        const responseData = await response.json();
 
-    const changes = calculateRateOfChange(responseData.data as DataPoint[]);
-    const probability = estimateRipCurrentProbability(changes);
-    // console.log(probability);
+        const changes = calculateRateOfChange(responseData.data as DataPoint[]);
+        const probability = estimateRipCurrentProbability(changes);
 
-    return NextResponse.json({ probability });
+        return NextResponse.json({ probability });
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message });
+    }
 }
