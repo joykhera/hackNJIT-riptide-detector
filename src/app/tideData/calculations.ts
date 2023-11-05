@@ -25,7 +25,6 @@ export function calculateRiptideData(response: ApiResponse): RiptideData {
         response['temp-surface'].forEach((_, index) => {
             // Define a flag for high risk conditions
             let highRiskConditionMet = false;
-            console.log(response['temp-surface']![index])
 
             // Check for specific high risk conditions
             // Example: If temperature is above a certain value, consider it high risk
