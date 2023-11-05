@@ -31,11 +31,6 @@ const dummy: InfoData = {
 	temp: 5,
 };
 
-function round(num: number, places: number) {
-    var multiplier = Math.pow(10, places);
-    return (Math.round(num * multiplier) / multiplier)*100;
-}
-
 export default function MapSection() {
 	const { isLoaded, loadError } = useMapApiLoader();
 	const [places, setPlaces] = useState<Place[]>([
@@ -101,7 +96,7 @@ export default function MapSection() {
 			const res = data.riptideData;
 			res.beach = places[0].name.slice(0, -1);
 			setInfoData(res);
-			setPercentage(round(res.probability, 3));
+			setPercentage(Math.round(res.probability*100));
 		} catch (e) {
 			alert("WINDY API KEY MISSING IN .ENV");
 		}
