@@ -13,7 +13,7 @@ function about() {
 				</div>
 				<Link href="/">
 					<p className="font-saira text-4xl text-white cursor-pointer">
-						Riptide Detector
+						Riptide Oracle
 					</p>
 				</Link>
 			</div>
