@@ -137,10 +137,7 @@ export default function DashboardPage() {
 							}}
 							zIndex={1}
 							options={{
-								pixelOffset: {
-									width: 0,
-									height: -40,
-								},
+								pixelOffset: new google.maps.Size(0, -40),
 							}}
 							onCloseClick={() => setSelectedPlace(undefined)}
 						>
