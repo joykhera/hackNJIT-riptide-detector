@@ -15,8 +15,9 @@ import Box from "@mui/material/Box";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
-// import dotenv from 'dotenv'
-// dotenv.config({ path: '../../.env' })
+import SearchBar from "../SearchBar";
+import { useMapApiLoader } from "@/contexts/MapApiLoaderContext";
+
 export const DEFAULT_DISTANCE_IN_KM = "100";
 
 interface Data {
@@ -37,10 +38,33 @@ const temp: InfoData = {
 	high: 3,
 };
 
-export default function DashboardPage({ API }: Data) {
+export default function MapSection({API}: {API: string}) {
+	const { isLoaded, loadError } = useMapApiLoader();
+	const [places, setPlaces] = useState<Place[]>([
+		{
+			name: "Burger City",
+			latitude: 40.7,
+			longitude: -74.0,
+		},
+	]);
+	const [position, setPosition] = useState({
+		lat: places[0].latitude,
+		lon: places[0].longitude,
+	});
+	const [isFirst, setFirst] = useState(true);
+	const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(
+		places[0]
+	);
+	const [open, setOpen] = useState(false);
+	const cityRef = useRef(undefined);
+
+
 	const configureSchema = Yup.object().shape({
 		city: Yup.string().required("Required"),
 	});
+
+	if (loadError) return <div>Error loading maps</div>;
+	if (!isLoaded) return <div>Loading Maps</div>;
 
 	const containerStyle = {
 		width: "100%",
@@ -67,20 +91,6 @@ export default function DashboardPage({ API }: Data) {
 		return new Promise((res) => setTimeout(res, delay));
 	}
 
-	const [places, setPlaces] = useState<Place[]>([
-		{
-			name: "Burger City",
-			latitude: 40.7,
-			longitude: -74.0,
-		},
-	]);
-	const cityRef = useRef(undefined);
-	const { isLoaded } = useJsApiLoader({
-		id: "google-map-script",
-		googleMapsApiKey: API,
-	});
-	const [isFirst, setFirst] = useState(true);
-
 	const style = {
 		position: "absolute" as "absolute",
 		top: "50%",
@@ -93,69 +103,11 @@ export default function DashboardPage({ API }: Data) {
 		p: 4,
 	};
 
-	const [position, setPosition] = useState({
-		lat: places[0].latitude,
-		lon: places[0].longitude,
-	});
-
-	const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(
-		places[0]
-	);
-	const [open, setOpen] = React.useState(false);
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
 	return (
-		<div className="flex flex-col gap-4">
-			<Formik
-				initialValues={{
-					city: "New York City",
-				}}
-				validationSchema={configureSchema}
-				onSubmit={async (formData) => {
-					const { lat, lon } = await getLatLonForCity(formData.city);
-					setPosition({ lat, lon });
-					const newPlace = [
-						{
-							name: formData.city,
-							latitude: lat,
-							longitude: lon,
-						},
-					];
-					if (isFirst) {
-						setFirst(false);
-					}
-					setPlaces(newPlace);
-					setSelectedPlace(undefined);
-					await timeout(1000);
-					setSelectedPlace(newPlace[0]);
-				}}
-			>
-				{({ errors }) => (
-					<Form className="w-full">
-						<div className="grid grid-cols-1 gap-8 text-left sm:grid-cols-2 md:grid-cols-3">
-							<div>
-								<label htmlFor="city">Search by City</label>
-								<Field
-									innerRef={cityRef}
-									className="input"
-									placeholder="New York City, Frankfurt, etc"
-									id="city"
-									name="city"
-									type="text"
-								/>
-							</div>
-							<button
-								className="button-inverse h-12 w-full self-end disabled:pointer-events-none disabled:bg-gray"
-								type="submit"
-							>
-								Search
-							</button>
-						</div>
-					</Form>
-				)}
-			</Formik>
-
+		<div className="flex flex-col gap-4 mt-12">
 			{isLoaded && (
 				<GoogleMap
 					mapContainerStyle={containerStyle}
