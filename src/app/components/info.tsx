@@ -6,7 +6,7 @@ interface Data {
 	probability: number;
 	waveHeight: number;
 	waveDirection: number;
-	wavePeriod: number,
+	wavePeriod: number;
 	windSpeed: number;
 	windDirection: number;
 	temp: number;
@@ -31,11 +31,9 @@ function info({
 	wavePeriod,
 	windSpeed,
 	windDirection,
-	temp
+	temp,
 }: Data) {
-	const numRows = 6;
-	const numCols = 2;
-
+	console.log("here");
 	const tableData = [
 		["Riptide (%)", probability],
 		["Wave Height (M)", waveHeight],
@@ -45,7 +43,8 @@ function info({
 		["Wind Direction", windDirection],
 		["Temperature (F)", temp],
 	];
-	const isRiptide = probability > 50;
+	const isRiptide = probability > 0.5;
+	console.log(isRiptide, probability);
 
 	return (
 		<>

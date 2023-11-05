@@ -42,7 +42,7 @@ function SearchBar({ API, position, setPosition, places, setPlaces }: Data) {
 			.then((data) => {
 				if (data.status === "OK" && data.results.length > 0) {
 					const location = data.results[0].geometry.location;
-					const latitude = location.lat - 0.1;
+					const latitude = location.lat;
 					const longitude = location.lng;
 					console.log(
 						`Latitude: ${latitude}, Longitude: ${longitude}`
@@ -50,7 +50,7 @@ function SearchBar({ API, position, setPosition, places, setPlaces }: Data) {
 					setPosition({ lat: latitude, lon: longitude });
 					setPlaces([
 						{
-							name: addressInput.split(" ")[0],
+							name: addressInput,
 							lat: latitude,
 							lon: longitude,
 						},
