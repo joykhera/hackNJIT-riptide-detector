@@ -14,7 +14,7 @@ export default function Home() {
 				<div className="h-20 bg-header-blue">
 					<Navbar />
 				</div>
-				<div className="flex flex-grow w-full bg-gray-200">
+				<div className="flex flex-grow w-full bg-white-200">
 					<MapSection />
 				</div>
         </MapApiLoaderProvider>

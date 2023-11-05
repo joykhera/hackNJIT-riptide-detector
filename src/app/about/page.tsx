@@ -10,7 +10,7 @@ const About = () => {
 
       <div className="mt-10 flex justify-center items-center">
         <div className="col-span-1 ml-5 mr-5 relative group w-5/6">
-          <div className="h-63 bg-white-100 rounded-lg overflow-hidden justify-center items-center h-full object-cover transform transition duration-500 hover:scale-100">
+          <div className="h-63 bg-white-200 rounded-lg overflow-hidden justify-center items-center h-full object-cover transform transition duration-500 hover:scale-100">
             <section
               className="p-9 bg-cover bg-center py-16 text-white relative"
               style={{
@@ -48,7 +48,7 @@ const About = () => {
           </div>
         </div>
       </div>
-      <div className="mt-8 mb-10 text-center bg-gray-100 p-4">
+      <div className="mt-8 mb-10 text-center bg-white-100 p-4">
         <div className="container mx-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="md:col-span-1 lg:col-span-1 bg-white p-4 rounded-lg shadow-md relative overflow-hidden">
             {/* Darkened background for the first column */}
