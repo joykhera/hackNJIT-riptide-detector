@@ -12,21 +12,23 @@ import anime from "animejs";
 interface InfoData {
 	beach: string;
 	probability: number;
-	windSpeed: number;
 	waveHeight: number;
+	waveDirection: number;
+	wavePeriod: number,
+	windSpeed: number;
+	windDirection: number;
 	temp: number;
-	cape: number;
-	ptype: number;
 }
 
 const dummy: InfoData = {
 	beach: "PT. Pleseant",
 	probability: 12,
-	windSpeed: 1,
 	waveHeight: 3,
+	waveDirection: 1,
+	wavePeriod: 2,
+	windSpeed: 1,
+	windDirection: 2,
 	temp: 5,
-	cape: 2,
-	ptype: 1,
 };
 
 function round(num: number, places: number) {
@@ -209,13 +211,28 @@ export default function MapSection() {
 																3
 															)
 														)}
-														windspeed={Number(
+														waveHeight={Number(
+															infoData.waveHeight.toFixed(
+																3
+															)
+														)}
+														waveDirection={Number(
+															infoData.waveDirection.toFixed(
+																3
+															)
+														)}
+														wavePeriod={Number(
+															infoData.wavePeriod.toFixed(
+																3
+															)
+														)}
+														windSpeed={Number(
 															infoData.windSpeed.toFixed(
 																3
 															)
 														)}
-														waveheight={Number(
-															infoData.waveHeight.toFixed(
+														windDirection={Number(
+															infoData.windDirection.toFixed(
 																3
 															)
 														)}
@@ -224,16 +241,7 @@ export default function MapSection() {
 																infoData.temp
 															).toFixed(3)
 														)}
-														cape={Number(
-															infoData.cape.toFixed(
-																3
-															)
-														)}
-														rain={Number(
-															infoData.ptype.toFixed(
-																3
-															)
-														)}
+		
 													/>
 												</Box>
 											</Modal>
