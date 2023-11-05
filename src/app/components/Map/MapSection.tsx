@@ -1,32 +1,18 @@
 "use client";
-
 import {
 	GoogleMap,
 	InfoWindowF,
-	MarkerF,
-	useJsApiLoader,
+	MarkerF
 } from "@react-google-maps/api";
 import * as React from "react";
 import Info from "../../components/info";
 import Modal from "@mui/material/Modal";
-
 import Box from "@mui/material/Box";
-
-import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
 import SearchBar from "../SearchBar";
 import { useMapApiLoader } from "@/contexts/MapApiLoaderContext";
 import anime from "animejs";
 
-export const DEFAULT_DISTANCE_IN_KM = "100";
-
-interface Data {
-	API: string;
-}
-
-interface Riptide {
-	riptideData: InfoData;
-}
 interface InfoData {
 	beach: string;
 	probability: number;
@@ -37,7 +23,7 @@ interface InfoData {
 	ptype: number;
 }
 
-const temp: InfoData = {
+const dummy: InfoData = {
 	beach: "PT. Pleseant",
 	probability: 12,
 	windSpeed: 1,
@@ -47,7 +33,7 @@ const temp: InfoData = {
 	ptype: 1,
 };
 
-export default function MapSection({ API }: { API: string }) {
+export default function MapSection() {
 	const { isLoaded, loadError } = useMapApiLoader();
 	const [places, setPlaces] = useState<Place[]>([
 		{
@@ -61,35 +47,31 @@ export default function MapSection({ API }: { API: string }) {
 		lon: places[0].lon,
 	});
 
-	const [isFirst, setFirst] = useState(true);
+	const isFirst = useRef(0);
 	const mountedNum = useRef(0);
 	const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(
-		places[0]
+		undefined
 	);
 	const [open, setOpen] = useState(false);
-	const cityRef = useRef(undefined);
 
 	useEffect(() => {
+		getData(position.lat, position.lon);
+
 		if (mountedNum.current < 2) {
 			mountedNum.current += 1;
 			return;
 		}
-		console.log(window.innerWidth, window.innerHeight);
-		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
+
 		anime({
 			targets: '#searchBar',
 			translateX: -(window.innerWidth / 10),
 			translateY: -(window.innerHeight / 2) + 80,
 			duration: 3000,
 		});
-		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
-	}, [position,]);
 
-	const [infoData, setInfoData] = useState<InfoData>(temp);
-
-	useEffect(() => {
-		getData(position.lat, position.lon);
 	}, [position]);
+
+	const [infoData, setInfoData] = useState<InfoData>(dummy);
 
 	if (loadError) return <div>Error loading maps</div>;
 	if (!isLoaded) return <div>Loading Maps</div>;
@@ -97,19 +79,19 @@ export default function MapSection({ API }: { API: string }) {
 	const containerStyle = {
 		width: "100%",
 		height: "100%",
-		// position: "absolute"
 	};
 
 	async function getData(lat: number, long: number) {
+		if (isFirst.current < 3) {
+			isFirst.current += 1;
+		}
 		const response = await fetch(
 			`http://localhost:3000/tideData?lat=${lat}&long=${long}`
 		);
 		const data = await response.json();
 		const res = data.riptideData;
 
-		console.log(res);
 		setInfoData(res);
-		// console.log(infoData);
 	}
 
 	type Place = {
@@ -123,7 +105,7 @@ export default function MapSection({ API }: { API: string }) {
 	}
 
 	const style = {
-		position: "absolute" as "absolute",
+		position: "absolute",
 		top: "50%",
 		left: "50%",
 		transform: "translate(-50%, -50%)",
@@ -134,8 +116,8 @@ export default function MapSection({ API }: { API: string }) {
 		p: 4,
 	};
 
-	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+	const handleOpen = () => {setSelectedPlace(places[0]); setOpen(true);};
+	const handleClose = () => {setSelectedPlace(undefined); setOpen(false);};
 
 	return (
 		<div className="w-full h-full">
@@ -157,7 +139,7 @@ export default function MapSection({ API }: { API: string }) {
 					>
 						{
 							<div>
-								{places.map((place) => (
+								{isFirst.current > 2 && places.map((place) => (
 									<MarkerF
 										key={`${place.name}-${place.lat}-${place.lon}`}
 										onClick={handleOpen}

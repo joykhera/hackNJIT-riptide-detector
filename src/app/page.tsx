@@ -12,14 +12,10 @@ export default function Home() {
 			<MapApiLoaderProvider apiKey="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI">
 				<div className="h-20 bg-header-blue">
 					<Navbar />
-					{/* <SearchBar API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI" /> */}
 				</div>
 				<div className="flex flex-grow w-full bg-gray-200">
-						<MapSection
-							API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
-							// API={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}
-						/>
-					</div>
+					<MapSection />
+				</div>
         </MapApiLoaderProvider>
       </div>
 		</main>
