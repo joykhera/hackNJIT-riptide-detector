@@ -1,13 +1,14 @@
 import Navbar from "./components/navbar";
+import SearchBar from "./components/SearchBar";
 import MapView from "./pages/landingPage/mapView";
 import MapSection from "./components/Map/MapSection"
-
 
 export default function Home() {
 	return (
 		<main>
 			<div className="h-20 bg-header-blue">
-				<Navbar />
+        <Navbar />
+        <SearchBar />
 			</div>
 			<div className="w-full h-screen bg-gray-200">
 				<div className="w-full h-full pt-6">
