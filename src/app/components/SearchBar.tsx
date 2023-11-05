@@ -24,9 +24,10 @@ interface Data {
 		lon: number;
 	};
 	setPlaces: (places: Place[]) => void;
+	setFirstUsed: (x: boolean) => void;
 }
 
-function SearchBar({ API, position, setPosition, places, setPlaces }: Data) {
+function SearchBar({ API, position, setPosition, places, setPlaces, setFirstUsed }: Data) {
 	const { isLoaded, loadError } = useMapApiLoader();
 
 	const handleSearch = () => {
@@ -48,9 +49,10 @@ function SearchBar({ API, position, setPosition, places, setPlaces }: Data) {
 						`Latitude: ${latitude}, Longitude: ${longitude}`
 					);
 					setPosition({ lat: latitude, lon: longitude });
+					setFirstUsed(true);
 					setPlaces([
 						{
-							name: addressInput.split(" ")[0],
+							name: addressInput,
 							lat: latitude,
 							lon: longitude,
 						},

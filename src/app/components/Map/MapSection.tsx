@@ -29,6 +29,11 @@ const dummy: InfoData = {
 	ptype: 1,
 };
 
+function round(num: number, places: number) {
+    var multiplier = Math.pow(10, places);
+    return (Math.round(num * multiplier) / multiplier)*100;
+}
+
 export default function MapSection() {
 	const { isLoaded, loadError } = useMapApiLoader();
 	const [places, setPlaces] = useState<Place[]>([
@@ -49,6 +54,8 @@ export default function MapSection() {
 		undefined
 	);
 	const [open, setOpen] = useState(false);
+	const [firstUsed, setFirstUsed] = useState(false);
+	const [percentage, setPercentage] = useState(0);
 
 	useEffect(() => {
 		getData(position.lat, position.lon);
@@ -84,14 +91,19 @@ export default function MapSection() {
 		if (isFirst.current < 3) {
 			isFirst.current += 1;
 		}
-		const response = await fetch(
+		try {
+			const response = await fetch(
 			`http://localhost:3000/tideData?lat=${lat}&long=${long}`
-		);
-		const data = await response.json();
-		const res = data.riptideData;
-		res.beach = places[0].name.slice(0, -1);
+			);
+			const data = await response.json();
+			const res = data.riptideData;
+			res.beach = places[0].name.slice(0, -1);
+			setInfoData(res);
+			setPercentage(round(res.probability, 3));
+		} catch (e) {
+			alert("WINDY API KEY MISSING IN .ENV");
+		}
 
-		setInfoData(res);
 	}
 
 	type Place = {
@@ -115,6 +127,11 @@ export default function MapSection() {
 	const handleOpen = () => {setSelectedPlace(places[0]); setOpen(true);};
 	const handleClose = () => {setSelectedPlace(undefined); setOpen(false);};
 
+	const textColorClass =
+    percentage >= 0.5
+      ? "text-red-500" // Apply green text color when percentage is greater than or equal to 70
+      : "text-green-500";  // Apply red text color otherwise
+
 	return (
 		<div className="w-full h-full">
 			<div
@@ -127,6 +144,7 @@ export default function MapSection() {
 					setPosition={setPosition}
 					places={places[0]}
 					setPlaces={setPlaces}
+					setFirstUsed={setFirstUsed}
 				/>
 			</div>
 			<div className="flex flex-col gap-4 w-full h-full">
@@ -151,12 +169,12 @@ export default function MapSection() {
 										}
 									/>
 								))}
-								{selectedPlace && (
+								{firstUsed && (
 									<>
 										<InfoWindowF
 											position={{
-												lat: selectedPlace.lat,
-												lng: selectedPlace.lon,
+												lat: places[0].lat,
+												lng: places[0].lon,
 											}}
 											zIndex={1}
 											options={{
@@ -167,11 +185,13 @@ export default function MapSection() {
 													),
 											}}
 											onCloseClick={() =>
-												setSelectedPlace(undefined)
+												setFirstUsed(false)
 											}
 										>
-											<div>
-												<h3>{selectedPlace.name}</h3>
+											<div className="text-center">
+												<h3 className="text-[15px]">{places[0].name}</h3>
+												<h3>Chance of Riptide: <p className={textColorClass}>{percentage}%</p></h3>
+												<h3 className="text-[12px]">(Click for more info)</h3>
 											</div>
 										</InfoWindowF>
 										<div className="">
