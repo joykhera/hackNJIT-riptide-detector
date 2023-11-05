@@ -10,8 +10,8 @@ import {
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
-// import dotenv from 'dotenv'
-// dotenv.config({ path: '../../.env' })
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
 export const DEFAULT_DISTANCE_IN_KM = "100";
 
 const configureSchema = Yup.object().shape({
@@ -27,7 +27,7 @@ async function getLatLonForCity(city: string) {
 	console.log(process.env);
 	const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
 		city + ", USA"
-	)}&key=AIzaSyC3CDMOwhNR3k3SrTkxrHbhl6yIqDqk_dA`;
+	)}&key=API_KEY`;
 	const geocodeResponse = await fetch(geocodeUrl);
 	const geocodeData = await geocodeResponse.json();
 	const { lat, lng } = geocodeData.results[0].geometry.location;
@@ -51,7 +51,7 @@ export default function DashboardPage() {
 	const cityRef = useRef(undefined);
 	const { isLoaded } = useJsApiLoader({
 		id: "google-map-script",
-		googleMapsApiKey: "AIzaSyC3CDMOwhNR3k3SrTkxrHbhl6yIqDqk_dA",
+		googleMapsApiKey: "API_KEY",
 	});
 
 	const [position, setPosition] = useState({
