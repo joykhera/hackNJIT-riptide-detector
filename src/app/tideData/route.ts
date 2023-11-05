@@ -42,7 +42,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             "model": "gfsWave",
             "parameters": ["waves"],
             "levels": ["surface"],
-            "key": process.env.WINDY_API_KEY
+            "key": 'mxJHtiUTFWroYO4ePZ7ZCnjB7EAjoGss'
         }),
     });
 
