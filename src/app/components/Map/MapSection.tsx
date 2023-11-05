@@ -1,19 +1,18 @@
 "use client";
 
 import {
-  GoogleMap,
-  InfoWindowF,
-  MarkerF,
-  useJsApiLoader
-}
-from "@react-google-maps/api";
+	GoogleMap,
+	InfoWindowF,
+	MarkerF,
+	useJsApiLoader,
+} from "@react-google-maps/api";
 
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
-// import dotenv from 'dotenv'
-// dotenv.config({ path: '../../.env' })
-export const DEFAULT_DISTANCE_IN_KM =  "100";
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
+export const DEFAULT_DISTANCE_IN_KM = "100";
 
 interface Data {
   API: string,
@@ -63,15 +62,14 @@ export default function DashboardPage({API}: Data) {
     googleMapsApiKey: API,
   });
   const [ isFirst, setFirst ] = useState(true);
+	const [position, setPosition] = useState({
+		lat: places[0].latitude,
+		lon: places[0].longitude,
+	});
 
-  const [position, setPosition] = useState({
-    lat: places[0].latitude,
-    lon: places[0].longitude,
-  });
-
-  const [selectedPlace, setSelectedPlace] = useState<Place | undefined> (
-    places[0]
-  );
+	const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(
+		places[0]
+	);
 
   return (
     <div className="flex flex-col gap-4">
