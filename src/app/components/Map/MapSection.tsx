@@ -15,32 +15,41 @@ import { useState, useEffect, useRef } from "react";
 // dotenv.config({ path: '../../.env' })
 export const DEFAULT_DISTANCE_IN_KM =  "100";
 
-const configureSchema = Yup.object().shape({
-  city: Yup.string().required('Required'),
-});
-
-const containerStyle = {
-  width: '100%',
-  height: '400px',  
-};
-
-async function getLatLonForCity(city: string) {
-  const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-    city + ", USA"
-  )}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`;
-  const geocodeResponse = await fetch (geocodeUrl);
-  const geocodeData = await geocodeResponse.json();
-  const {lat, lng} = geocodeData.results[0].geometry.location;
-  return {lon: lng, lat}
+interface Data {
+  API: string,
 }
 
-export type Place = {
-    name:string;
-    latitude:number;
-    longitude:number;
-};
+export default function DashboardPage({API}: Data) {
 
-export default function DashboardPage() {
+  const configureSchema = Yup.object().shape({
+    city: Yup.string().required('Required'),
+  });
+  
+  const containerStyle = {
+    width: '100%',
+    height: '650px',  
+  };
+  
+  async function getLatLonForCity(city: string) {
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      city + ", USA"
+    )}&key=${API}`;
+    const geocodeResponse = await fetch (geocodeUrl);
+    const geocodeData = await geocodeResponse.json();
+    const {lat, lng} = geocodeData.results[0].geometry.location;
+    return {lon: lng, lat}
+  }
+  
+  type Place = {
+      name:string;
+      latitude:number;
+      longitude:number;
+  };
+  
+  function timeout(delay: number) {
+    return new Promise( res => setTimeout(res, delay) );
+  }
+
   const [places, setPlaces] = useState<Place[]>([
     {
       name: "Burger City",
@@ -51,8 +60,9 @@ export default function DashboardPage() {
   const cityRef = useRef(undefined);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
+    googleMapsApiKey: API,
   });
+  const [ isFirst, setFirst ] = useState(true);
 
   const [position, setPosition] = useState({
     lat: places[0].latitude,
@@ -80,7 +90,12 @@ export default function DashboardPage() {
               longitude: lon,
             },
           ]
+          if(isFirst) {
+            setFirst(false);
+          }
           setPlaces(newPlace)
+          setSelectedPlace(undefined)
+          await timeout(1000);
           setSelectedPlace(newPlace[0])
         }}
         >
@@ -124,6 +139,7 @@ export default function DashboardPage() {
                     : setSelectedPlace(place)
                 }}
                 position={{ lat: place.latitude, lng: place.longitude }}
+                animation={window.google.maps.Animation.DROP}
               />
             ))}
           {selectedPlace && (
@@ -133,12 +149,7 @@ export default function DashboardPage() {
                 lng: selectedPlace.longitude,
               }}
               zIndex={1}
-              options={{
-                pixelOffset: {
-                  width: 0,
-                  height: -40,
-                },
-              }}
+              options={{ pixelOffset: new google.maps.Size(0, -40) }}
               onCloseClick={() => setSelectedPlace(undefined)}
             >
               <div>
