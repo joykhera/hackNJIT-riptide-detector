@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             "model": "gfs",
             "parameters": ["temp", "precip", "windGust", "cape", "wind"],
             "levels": ["surface"],
-            "key": process.env.WINDY_API_KEY
+            "key": 'mxJHtiUTFWroYO4ePZ7ZCnjB7EAjoGss'
         }),
     });
 
