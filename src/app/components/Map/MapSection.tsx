@@ -92,13 +92,14 @@ export default function MapSection() {
 			const response = await fetch(
 				`http://localhost:3000/tideData?lat=${lat}&long=${long}`
 			);
+			console.log(response);
 			const data = await response.json();
 			const res = data.riptideData;
 			res.beach = places[0].name.slice(0, -1);
 			setInfoData(res);
 			setPercentage(Math.round(res.probability*100));
 		} catch (e) {
-			alert("WINDY API KEY MISSING IN .ENV");
+			alert(e);
 		}
 
 	}
