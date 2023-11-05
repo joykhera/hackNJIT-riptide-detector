@@ -11,8 +11,12 @@ export default function Home() {
 			<div className="w-full h-screen bg-gray-200">
 				<div className="w-full h-full pt-6">
 					<MapView />
+          <MapSection/>
+
 				</div>
 			</div>
 		</main>
 	);
 }
+
+export default page;
