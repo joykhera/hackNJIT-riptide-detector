@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Navbar from "./components/navbar";
+import MapView from "./pages/landingPage/mapView";
 
 export default function Home() {
 	return (
@@ -8,7 +9,9 @@ export default function Home() {
 				<Navbar />
 			</div>
 			<div className="w-full h-screen bg-gray-200">
-				<div className="w-full h-full pt-6"></div>
+				<div className="w-full h-full pt-6">
+					<MapView />
+				</div>
 			</div>
 		</main>
 	);
