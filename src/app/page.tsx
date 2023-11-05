@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Navbar from "./components/navbar";
 import MapView from "./pages/landingPage/mapView";
 import MapSection from "./components/Map/MapSection"
+
 
 export default function Home() {
 	return (
@@ -14,10 +14,8 @@ export default function Home() {
 					<MapView />
           <MapSection API={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}/>
 
-
 				</div>
 			</div>
 		</main>
 	);
 }
-
