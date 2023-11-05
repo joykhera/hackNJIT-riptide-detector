@@ -1,32 +1,17 @@
 "use client";
 
-import {
-	GoogleMap,
-	InfoWindowF,
-	MarkerF,
-	useJsApiLoader,
-} from "@react-google-maps/api";
+import { GoogleMap, InfoWindowF, MarkerF } from "@react-google-maps/api";
 import * as React from "react";
 import Info from "../../components/info";
 import Modal from "@mui/material/Modal";
 
 import Box from "@mui/material/Box";
 
-import * as Yup from "yup";
 import { useState, useEffect, useRef } from "react";
 import SearchBar from "../SearchBar";
 import { useMapApiLoader } from "@/contexts/MapApiLoaderContext";
 import anime from "animejs";
 
-export const DEFAULT_DISTANCE_IN_KM = "100";
-
-interface Data {
-	API: string;
-}
-
-interface Riptide {
-	riptideData: InfoData;
-}
 interface InfoData {
 	beach: string;
 	probability: number;
@@ -61,13 +46,11 @@ export default function MapSection({ API }: { API: string }) {
 		lon: places[0].lon,
 	});
 
-	const [isFirst, setFirst] = useState(true);
 	const mountedNum = useRef(0);
 	const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(
 		places[0]
 	);
 	const [open, setOpen] = useState(false);
-	const cityRef = useRef(undefined);
 
 	useEffect(() => {
 		if (mountedNum.current < 2) {
@@ -75,15 +58,19 @@ export default function MapSection({ API }: { API: string }) {
 			return;
 		}
 		console.log(window.innerWidth, window.innerHeight);
-		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
+		console.log(
+			document.getElementById("searchBar")?.getBoundingClientRect()
+		);
 		anime({
-			targets: '#searchBar',
+			targets: "#searchBar",
 			translateX: -(window.innerWidth / 10),
 			translateY: -(window.innerHeight / 2) + 80,
 			duration: 3000,
 		});
-		console.log(document.getElementById("searchBar")?.getBoundingClientRect());
-	}, [position,]);
+		console.log(
+			document.getElementById("searchBar")?.getBoundingClientRect()
+		);
+	}, [position]);
 
 	const [infoData, setInfoData] = useState<InfoData>(temp);
 
@@ -97,8 +84,11 @@ export default function MapSection({ API }: { API: string }) {
 	const containerStyle = {
 		width: "100%",
 		height: "100%",
-		// position: "absolute"
 	};
+
+	function kToF(kelvin: number): number {
+		return (kelvin - 273.15) * (9 / 5) + 32;
+	}
 
 	async function getData(lat: number, long: number) {
 		const response = await fetch(
@@ -106,10 +96,10 @@ export default function MapSection({ API }: { API: string }) {
 		);
 		const data = await response.json();
 		const res = data.riptideData;
+		res.beach = places[0].name.slice(0, -1);
 
 		console.log(res);
 		setInfoData(res);
-		// console.log(infoData);
 	}
 
 	type Place = {
@@ -117,10 +107,6 @@ export default function MapSection({ API }: { API: string }) {
 		lat: number;
 		lon: number;
 	};
-
-	function timeout(delay: number) {
-		return new Promise((res) => setTimeout(res, delay));
-	}
 
 	const style = {
 		position: "absolute" as "absolute",
@@ -139,9 +125,12 @@ export default function MapSection({ API }: { API: string }) {
 
 	return (
 		<div className="w-full h-full">
-				<div id='searchBar' className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10`}>
+			<div
+				id="searchBar"
+				className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10`}
+			>
 				<SearchBar
-					API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
+					API="AIzaSyC08j2W_ZgnXQD_8agkZSI6roDQKiMZu-A"
 					position={position}
 					setPosition={setPosition}
 					places={places[0]}
@@ -203,18 +192,36 @@ export default function MapSection({ API }: { API: string }) {
 												<Box sx={style}>
 													<Info
 														beach={infoData.beach}
-														probability={
-															infoData.probability
-														}
-														windspeed={
-															infoData.windSpeed
-														}
-														waveheight={
-															infoData.waveHeight
-														}
-														temp={infoData.temp}
-														cape={infoData.cape}
-														rain={infoData.ptype}
+														probability={Number(
+															infoData.probability.toFixed(
+																3
+															)
+														)}
+														windspeed={Number(
+															infoData.windSpeed.toFixed(
+																3
+															)
+														)}
+														waveheight={Number(
+															infoData.waveHeight.toFixed(
+																3
+															)
+														)}
+														temp={Number(
+															kToF(
+																infoData.temp
+															).toFixed(3)
+														)}
+														cape={Number(
+															infoData.cape.toFixed(
+																3
+															)
+														)}
+														rain={Number(
+															infoData.ptype.toFixed(
+																3
+															)
+														)}
 													/>
 												</Box>
 											</Modal>

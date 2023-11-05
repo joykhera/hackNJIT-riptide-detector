@@ -7,21 +7,23 @@ import { MapApiLoaderProvider } from "@/contexts/MapApiLoaderContext";
 
 export default function Home() {
 	return (
-    <main>
-      <div className="flex flex-col h-screen overflow-hidden">
-			<MapApiLoaderProvider apiKey="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI">
-				<div className="h-20 bg-header-blue">
-					<Navbar />
-					{/* <SearchBar API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI" /> */}
-				</div>
-				<div className="flex flex-grow w-full bg-gray-200">
+		<main>
+			<div className="flex flex-col h-screen overflow-hidden">
+				<MapApiLoaderProvider apiKey="AIzaSyC08j2W_ZgnXQD_8agkZSI6roDQKiMZu-A">
+					<div className="h-20 bg-header-blue">
+						<Navbar />
+						{/* <SearchBar API="AIzaSyC08j2W_ZgnXQD_8agkZSI6roDQKiMZu
+AIzaSyDtFXYEjHABeVmYrw2VAkOSJSICDATtCWI
+" /> */}
+					</div>
+					<div className="flex flex-grow w-full bg-gray-200">
 						<MapSection
-							API="AIzaSyALbJ2JND15H6HNWdhUTpW348JUQwQ3uDI"
+							API="AIzaSyC08j2W_ZgnXQD_8agkZSI6roDQKiMZu-A"
 							// API={process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? ""}
 						/>
 					</div>
-        </MapApiLoaderProvider>
-      </div>
+				</MapApiLoaderProvider>
+			</div>
 		</main>
 	);
 }
